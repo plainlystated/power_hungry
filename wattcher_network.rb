@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'serialport'
 
+require 'lib/wattcher_network/history'
 require 'lib/wattcher_network/reading'
 require 'lib/wattcher_network/database'
 require 'lib/xbee/packet'
@@ -28,6 +29,14 @@ class WattcherNetwork
     while true
       reading = next_reading
       puts reading.to_s if @debug
+
+      WattcherNetwork::History.add(reading.watt_hours)
+      if WattcherNetwork::History.interval_passed?
+        puts "Watt-hours used in the past #{WattcherNetwork::History::INTERVAL_LENGTH} seconds: #{WattcherNetwork::History.interval_watt_hours}"
+        Interval.create!(:watt_hours => WattcherNetwork::History.interval_watt_hours, :interval_length => WattcherNetwork::History::INTERVAL_LENGTH)
+        WattcherNetwork::History.restart
+      else
+      end
     end
   end
 end

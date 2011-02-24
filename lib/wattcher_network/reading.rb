@@ -18,6 +18,7 @@ class WattcherNetwork
 
     # sampling at 1khz, so 16.6 samples per period.  Considering the first 17 samples should be close enough
     SAMPLES_PER_PERIOD = 17.0
+    SAMPLE_INTERVAL = 2 # Seconds
 
     attr_reader :amperage_data, :voltage_data, :wattage_data
 
@@ -36,7 +37,8 @@ class WattcherNetwork
         :wattage_data => @wattage_data,
         :voltage_avg => averages[:volts],
         :amperage_avg => averages[:amps],
-        :wattage_avg => averages[:watts]
+        :wattage_avg => averages[:watts],
+        :watt_hours => watt_hours
       }
       case CurrentReading.count
       when 0 : CurrentReading.create!(params)
@@ -55,9 +57,13 @@ class WattcherNetwork
         :watts => @wattage_data
       }.each do |key, data|
         one_cycle = data[0, SAMPLES_PER_PERIOD]
-        @averages[key] = one_cycle.inject(0.0) { |sum, val| sum + val } / SAMPLES_PER_PERIOD
+        @averages[key] = one_cycle.inject(0.0) { |sum, val| sum + val.abs } / SAMPLES_PER_PERIOD
       end
       @averages
+    end
+
+    def watt_hours
+      (averages[:watts] * SAMPLE_INTERVAL) / (60 * 60) # watts used over interval, divided by 1 hour
     end
 
     def to_s

@@ -3,6 +3,7 @@ require 'dm-migrations'
 require 'dm-types'
 
 require 'models/current_reading'
+require 'models/interval'
 
 class WattcherNetwork
   module Database

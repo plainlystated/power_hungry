@@ -8,6 +8,7 @@ class CurrentReading
   property :amperage_avg,  Float
   property :voltage_avg,   Float
   property :wattage_avg,   Float
+  property :watt_hours,    Float
 
   property :created_at, DateTime, :default => lambda { DateTime.now }
   property :updated_at, DateTime, :default => lambda { DateTime.now }
