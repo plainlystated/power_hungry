@@ -25,8 +25,9 @@
   <body>
     <div id="holder"></div>
     <p>
-      <a href="#" id="now">now</a>
+      <a href="#" id="now">right now</a>
       <a href="#" id="hour">past hour</a>
+      <a href="#" id="day">past day</a>
     </p>
     <script id="source" language="javascript" type="text/javascript">
       $("#now").click(function() {
@@ -40,22 +41,7 @@
             { data: amps, label: "Amps", yaxis: 2 },
             { data: watts, label: "Watts" }
           ], {
-xaxis: { mode: 'time', ticks: <%= [1,5,9,13,17].map {|i| voltages[i][0]}.inspect %>,
-             tickFormatter: function (val, axis) {
-                var d = new Date(val);
-                var seconds = d.getSeconds();
-                var minutes = d.getMinutes();
-                var millis = d.getMilliseconds();
-                if (seconds < 10) { seconds = "0" + seconds; }
-                if (millis < 10) {
-                  millis = "00" + millis;
-                } else if (millis < 100) {
-                  millis = "0" + millis;
-                }
-                if (minutes < 10) { minutes = "0" + minutes; }
-                return d.getHours() + ":" + minutes + ":" + seconds + "." + millis;
-              }
-            },
+            xaxis: { ticks: [] },
             yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " V"} },
             y2axis: { min: -<%= amps_bounds %>, max: <%= amps_bounds %>, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
             legend: { position: 'sw' }
@@ -65,6 +51,19 @@ xaxis: { mode: 'time', ticks: <%= [1,5,9,13,17].map {|i| voltages[i][0]}.inspect
 
       $("#hour").click(function() {
         var watthours = <%= interval_points(@past_hour).inspect %>;
+
+        $.plot($("#holder"),
+          [
+            { data: watthours, label: "Watt-Hours" },
+          ], {
+            xaxis: { mode: 'time' },
+            yaxis: { },
+            legend: { position: 'sw' }
+          });
+          return false;
+        });
+      $("#day").click(function() {
+        var watthours = <%= interval_points(@past_day).inspect %>;
 
         $.plot($("#holder"),
           [
