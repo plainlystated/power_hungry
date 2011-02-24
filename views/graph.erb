@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <style>
+      body {
+          background: #999 url(http://raphaeljs.com/images/bgbg.png);
+          font: 100.01% "Fontin Sans", Fontin-Sans, "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Lucida, Verdana, Helvetica, sans-serif;
+          color: #000;
+          margin: 10px 0 0 0;
+          padding: 0;
+          text-align: center;
+      }
+      #holder {
+          -moz-border-radius: 10px;
+          -webkit-border-radius: 10px;
+          -webkit-box-shadow: 0 1px 3px #666;
+          background: #ddd url(http://raphaeljs.com/images/bg.png);
+          margin: 0 auto;
+          width: 1200px;
+          height: 480px;
+      }
+      p {
+          text-align: left;
+          margin: .5em 2em;
+      }
+    </style>
+    <script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script> 
+    <script src="js/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script> 
+  <body>
+    <div id="holder"></div>
+<script id="source" language="javascript" type="text/javascript"> 
+$(function () {
+    var voltages = <%= @voltages.inspect %>;
+    var amps = <%= @amps.inspect %>;
+    var watts = <%= @watts.inspect %>;
+ 
+    $.plot($("#holder"),
+           [ { data: voltages, label: "Voltage" },
+             { data: amps, label: "Amps", yaxis: 2 },
+             { data: watts, label: "Watts" }],
+           {
+             xaxis: { },
+             yaxis: { min: -200, max: 200 },
+             y2axis: { },
+             legend: { position: 'sw' } });
+});
+    </script>
+  </head>
+  </body>
+</html>
