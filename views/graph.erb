@@ -19,27 +19,49 @@
           height: 480px;
       }
     </style>
-    <script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script> 
-    <script src="js/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script> 
+    <script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script>
   </head>
   <body>
     <div id="holder"></div>
-    <script id="source" language="javascript" type="text/javascript"> 
-    $(function () {
+    <p>
+      <a href="#" id="now">now</a>
+      <a href="#" id="hour">past hour</a>
+    </p>
+    <script id="source" language="javascript" type="text/javascript">
+      $("#now").click(function() {
         var voltages = <%= voltages.inspect %>;
         var amps = <%= amps.inspect %>;
         var watts = <%= watts.inspect %>;
 
         $.plot($("#holder"),
-               [ { data: voltages, label: "Voltage" },
-                 { data: amps, label: "Amps", yaxis: 2 },
-                 { data: watts, label: "Watts" }],
-               {
-                 xaxis: { },
-                 yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " V"} },
-                 y2axis: { min: -<%= amps_bounds %>, max: <%= amps_bounds %>, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
-                 legend: { position: 'sw' } });
+          [
+            { data: voltages, label: "Voltage" },
+            { data: amps, label: "Amps", yaxis: 2 },
+            { data: watts, label: "Watts" }
+          ], {
+            xaxis: { },
+            yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " V"} },
+            y2axis: { min: -<%= amps_bounds %>, max: <%= amps_bounds %>, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
+            legend: { position: 'sw' }
+          });
+          return false;
       });
+
+      $("#hour").click(function() {
+        var watthours = <%= interval_points(@past_hour).inspect %>;
+
+        $.plot($("#holder"),
+          [
+            { data: watthours, label: "Watt-Hours" },
+          ], {
+            xaxis: { mode: 'time' },
+            yaxis: { },
+            legend: { position: 'sw' }
+          });
+          return false;
+        });
+      $("#now").click();
       </script>
   </body>
 </html>

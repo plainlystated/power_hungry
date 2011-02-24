@@ -17,6 +17,13 @@ helpers do
     end
   end
 
+  def interval_points(intervals)
+    intervals.map do |interval|
+      time = Time.parse(interval.created_at.to_s)
+      [time.to_i, interval.watt_hours]
+    end
+  end
+
   def voltages
     _data_to_timeless_pairs(@voltages)
   end
@@ -30,12 +37,9 @@ helpers do
   end
 end
 
-get '/hi' do
-  "Hello world!"
-end
-
 get '/' do
   reading = CurrentReading.first
+  @past_hour = Interval.all(:created_at.gt => DateTime.now - (60*60))
 
   @voltages, @amps, @watts = reading.voltage_data, reading.amperage_data, reading.wattage_data
   erb :graph

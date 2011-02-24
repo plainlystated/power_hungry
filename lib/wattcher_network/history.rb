@@ -1,6 +1,6 @@
 class WattcherNetwork
   class History
-    INTERVAL_LENGTH = 10
+    INTERVAL_LENGTH = 5 * 60
 
     @interval_watt_hours = 0
     @interval_start_time = Time.now
