@@ -20,7 +20,7 @@ class WattcherNetwork
 
   def next_reading
     packet = XBee::Packet.new(@serial, @debug)
-    WattcherNetwork::Reading.new(packet)
+    WattcherNetwork::Reading.new(packet, @debug)
   end
 
   def run

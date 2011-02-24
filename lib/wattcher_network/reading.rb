@@ -16,21 +16,48 @@ class WattcherNetwork
       nil   # etc... approx ((2.4v * (10Ko/14.7Ko)) / 3
     ]
 
+    # sampling at 1khz, so 16.6 samples per period.  Considering the first 17 samples should be close enough
+    SAMPLES_PER_PERIOD = 17.0
+
     attr_reader :amperage_data, :voltage_data, :wattage_data
 
-    def initialize(packet)
+    def initialize(packet, debug=false)
       @voltage_data = _parse_voltage_data(packet)
       @amperage_data = _parse_amperage_data(packet)
       @wattage_data = _calculate_wattage_data(@voltage_data, @amperage_data)
+      puts "Averages: #{averages.inspect}" if debug
       save
     end
 
     def save
+      params = {
+        :voltage_data => @voltage_data,
+        :amperage_data => @amperage_data,
+        :wattage_data => @wattage_data,
+        :voltage_avg => averages[:volts],
+        :amperage_avg => averages[:amps],
+        :wattage_avg => averages[:watts]
+      }
       case CurrentReading.count
-      when 0 : CurrentReading.create!(:voltage_data => @voltage_data, :amperage_data => @amperage_data, :wattage_data => @wattage_data)
-      when 1 : CurrentReading.first.update!(:voltage_data => @voltage_data, :amperage_data => @amperage_data, :wattage_data => @wattage_data, :updated_at => DateTime.now)
+      when 0 : CurrentReading.create!(params)
+      when 1 : CurrentReading.first.update!(params.merge(:updated_at => DateTime.now))
       else raise("Too many current readings! (#{CurrentReading.count})")
       end
+    end
+
+    def averages
+      return @averages if @averages
+
+      @averages = {}
+      {
+        :amps => @amperage_data,
+        :volts => @voltage_data,
+        :watts => @wattage_data
+      }.each do |key, data|
+        one_cycle = data[0, SAMPLES_PER_PERIOD]
+        @averages[key] = one_cycle.inject(0.0) { |sum, val| sum + val } / SAMPLES_PER_PERIOD
+      end
+      @averages
     end
 
     def to_s

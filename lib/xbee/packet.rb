@@ -26,7 +26,7 @@ class XBee
       @packet_data = _read_packet(serial)
       if @debug
         puts
-        puts "XBee packet received:"
+        puts "XBee packet received @ #{DateTime.now}:"
       end
 
       _parse_data(@packet_data)
