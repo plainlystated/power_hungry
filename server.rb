@@ -1,23 +1,35 @@
 require 'rubygems'
 require 'sinatra'
-require 'wattcher'
+require 'lib/wattcher_network/database'
 
-serial = SerialPort.new("/dev/tty.usbserial-FTF66X1C")
-wattcher = Wattcher.new
+WattcherNetwork::Database.connect
+
+helpers do
+  def amps
+    _data_to_timeless_pairs(@amps)
+  end
+
+  def voltages
+    _data_to_timeless_pairs(@voltages)
+  end
+
+  def watts
+    _data_to_timeless_pairs(@watts)
+  end
+
+  def _data_to_timeless_pairs(data)
+    (1..data.size).to_a.zip(data)
+  end
+end
 
 get '/hi' do
   "Hello world!"
 end
 
 get '/' do
-  reading = wattcher.next_reading
-  puts "read"
+  reading = CurrentReading.first
 
   @voltages, @amps, @watts = reading.voltage_data, reading.amperage_data, reading.wattage_data
-  p @voltages
-  @voltages = (1..@voltages.size).to_a.zip(@voltages)
-  @amps = (1..@amps.size).to_a.zip(@amps)
-  @watts = (1..@watts.size).to_a.zip(@watts)
   erb :graph
 end
 

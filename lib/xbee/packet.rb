@@ -19,20 +19,25 @@ class XBee
     FIELDS.each { |field| attr_reader field }
     attr_reader :analog_samples, :digital_samples
 
-    def initialize(serial)
+    def initialize(serial, debug = false)
+      @debug = debug
       digital_samples = []
       analog_samples = []
       @packet_data = _read_packet(serial)
+      if @debug
+        puts
+        puts "XBee packet received:"
+      end
+
       _parse_data(@packet_data)
 
       if @debug
-        puts
         puts "address: #{address}"
         puts "address broadcast: #{address_broadcast}"
         puts "pan broadcast: #{pan_broadcast}"
         puts
-        puts "digital samples: #{@digital_samples.inspect}"
-        puts "analog samples: #{@analog_samples.inspect}"
+        # puts "digital samples: #{@digital_samples.inspect}"
+        # puts "analog samples: #{@analog_samples.inspect}"
       end
     end
 

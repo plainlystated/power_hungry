@@ -14,22 +14,22 @@ class WattcherNetwork
   end
 
   def debug
-    while true
-      puts next_reading.to_s
-    end
+    @debug = true
+    run
   end
 
   def next_reading
-    packet = XBee::Packet.new(@serial)
+    packet = XBee::Packet.new(@serial, @debug)
     WattcherNetwork::Reading.new(packet)
+  end
+
+  def run
+    puts "Wattcher Network up and running on #{DateTime.now.strftime("%Y-%m-%d %H:%M")}"
+    while true
+      reading = next_reading
+      puts reading.to_s if @debug
+    end
   end
 end
 
 WattcherNetwork::Database.connect
-
-if ARGV[0] == 'debug'
-  serial = SerialPort.new(WattcherNetwork::SERIALPORT)
-  wattcher = WattcherNetwork.new
-  wattcher.debug
-end
-

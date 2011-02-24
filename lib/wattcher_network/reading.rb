@@ -26,10 +26,9 @@ class WattcherNetwork
     end
 
     def save
-      puts "saving to db"
       case CurrentReading.count
       when 0 : CurrentReading.create!(:voltage_data => @voltage_data, :amperage_data => @amperage_data, :wattage_data => @wattage_data)
-      when 1 : CurrentReading.first.update_attributes(:voltage_data => @voltage_data, :amperage_data => @amperage_data, :wattage_data => @wattage_data, :updated_at => DateTime.now)
+      when 1 : CurrentReading.first.update!(:voltage_data => @voltage_data, :amperage_data => @amperage_data, :wattage_data => @wattage_data, :updated_at => DateTime.now)
       else raise("Too many current readings! (#{CurrentReading.count})")
       end
     end

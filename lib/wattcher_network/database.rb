@@ -11,8 +11,8 @@ class WattcherNetwork
     USERNAME = "wattcher_network"
     PASSWORD = "Ed_HtnszGhr4Ac5h4kGFV-cy_mU"
 
-    def self.connect
-      DataMapper::Logger.new($stdout, :debug)
+    def self.connect(debug = false)
+      DataMapper::Logger.new($stdout, :debug) if debug
       DataMapper.setup(:default, "postgres://#{USERNAME}:#{PASSWORD}@#{SERVER}/#{DB_NAME}")
       DataMapper.finalize
     end
