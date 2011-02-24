@@ -9,10 +9,9 @@ class WattcherNetwork
   SERIALPORT = "/dev/tty.usbserial-FTF66X1C"
   BAUDRATE = 9600
 
-
   def initialize
     @serial = SerialPort.new(SERIALPORT)
-    WattcherNetwork::Database.init
+    WattcherNetwork::Database.connect
   end
 
   def debug
