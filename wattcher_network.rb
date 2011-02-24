@@ -11,7 +11,6 @@ class WattcherNetwork
 
   def initialize
     @serial = SerialPort.new(SERIALPORT)
-    WattcherNetwork::Database.connect
   end
 
   def debug
@@ -22,12 +21,15 @@ class WattcherNetwork
 
   def next_reading
     packet = XBee::Packet.new(@serial)
-    Wattcher::Reading.new(packet)
+    WattcherNetwork::Reading.new(packet)
   end
-
 end
 
-# serial = SerialPort.new(Wattcher::SERIALPORT)
-# wattcher = Wattcher.new
-# wattcher.debug
+WattcherNetwork::Database.connect
+
+if ARGV[0] == 'debug'
+  serial = SerialPort.new(WattcherNetwork::SERIALPORT)
+  wattcher = WattcherNetwork.new
+  wattcher.debug
+end
 
