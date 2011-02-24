@@ -9,6 +9,14 @@ helpers do
     _data_to_timeless_pairs(@amps)
   end
 
+  def amps_bounds
+    if @amps.min.abs > @amps.max
+      @amps.min.abs
+    else
+      @amps.max
+    end
+  end
+
   def voltages
     _data_to_timeless_pairs(@voltages)
   end

@@ -13,18 +13,15 @@
           -moz-border-radius: 10px;
           -webkit-border-radius: 10px;
           -webkit-box-shadow: 0 1px 3px #666;
-          background: #ddd url(http://raphaeljs.com/images/bg.png);
+          background: #ddd;
           margin: 0 auto;
           width: 1200px;
           height: 480px;
       }
-      p {
-          text-align: left;
-          margin: .5em 2em;
-      }
     </style>
     <script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script> 
     <script src="js/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script> 
+  </head>
   <body>
     <div id="holder"></div>
     <script id="source" language="javascript" type="text/javascript"> 
@@ -39,11 +36,10 @@
                  { data: watts, label: "Watts" }],
                {
                  xaxis: { },
-                 yaxis: { min: -200, max: 200 },
-                 y2axis: { },
+                 yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " V"} },
+                 y2axis: { min: -<%= amps_bounds %>, max: <%= amps_bounds %>, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
                  legend: { position: 'sw' } });
-    });
-    </script>
-  </head>
+      });
+      </script>
   </body>
 </html>
