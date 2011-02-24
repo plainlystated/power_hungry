@@ -19,9 +19,9 @@ helpers do
     bound + (bound * 0.1)
   end
 
-  def interval_points(intervals)
+  def interval_points(intervals, method)
     intervals.map do |interval|
-      [_to_timestamp(interval.updated_at), interval.watt_hours]
+      [_to_timestamp(interval.updated_at), interval.send(method)]
     end
   end
 

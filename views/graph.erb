@@ -50,11 +50,13 @@
       });
 
       $("#hour").click(function() {
-        var watthours = <%= interval_points(@past_hour).inspect %>;
+        var watthours = <%= interval_points(@past_hour, :watt_hours).inspect %>;
+        var watts = <%= interval_points(@past_hour, :average_watts).inspect %>;
 
         $.plot($("#holder"),
           [
             { data: watthours, label: "Watt-Hours" },
+            { data: watts, label: "Watts" }
           ], {
             xaxis: { mode: 'time' },
             yaxis: { },
@@ -63,11 +65,13 @@
           return false;
         });
       $("#day").click(function() {
-        var watthours = <%= interval_points(@past_day).inspect %>;
+        var watthours = <%= interval_points(@past_day, :watt_hours).inspect %>;
+        var watts = <%= interval_points(@past_day, :average_watts).inspect %>;
 
         $.plot($("#holder"),
           [
             { data: watthours, label: "Watt-Hours" },
+            { data: watts, label: "Watts" },
           ], {
             xaxis: { mode: 'time' },
             yaxis: { },

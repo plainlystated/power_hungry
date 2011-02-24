@@ -2,11 +2,14 @@ class WattcherNetwork
   class History
     INTERVAL_LENGTH = 5 * 60
 
-    @interval_watt_hours = 0
-    @interval_start_time = Time.now
-
-    def self.add(watthr)
+    def self.add(watthr, watts)
       @interval_watt_hours += watthr
+      @interval_watts += watts
+      @interval_readings += 1
+    end
+
+    def self.average_watts
+      1.0 * @interval_watts / @interval_readings
     end
 
     def self.elapsed_time
@@ -23,7 +26,11 @@ class WattcherNetwork
 
     def self.restart
       @interval_watt_hours = 0
+      @interval_watts = 0
+      @interval_readings = 0
       @interval_start_time = Time.now
     end
   end
 end
+
+WattcherNetwork::History.restart
