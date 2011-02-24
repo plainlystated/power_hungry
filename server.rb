@@ -6,42 +6,51 @@ WattcherNetwork::Database.connect
 
 helpers do
   def amps
-    _data_to_timeless_pairs(@amps)
+    _data_to_microsecond_pairs(@reading.amperage_data, @reading.updated_at)
   end
 
   def amps_bounds
-    if @amps.min.abs > @amps.max
-      @amps.min.abs
+    if @reading.amperage_data.min.abs > @reading.amperage_data.max
+      @reading.amperage_data.min.abs
     else
-      @amps.max
+      @reading.amperage_data.max
     end
   end
 
   def interval_points(intervals)
     intervals.map do |interval|
-      time = Time.parse(interval.created_at.to_s)
-      [time.to_i, interval.watt_hours]
+      [_to_timestamp(interval.updated_at), interval.watt_hours]
     end
   end
 
   def voltages
-    _data_to_timeless_pairs(@voltages)
+    _data_to_microsecond_pairs(@reading.voltage_data, @reading.updated_at)
   end
 
   def watts
-    _data_to_timeless_pairs(@watts)
+    _data_to_microsecond_pairs(@reading.wattage_data, @reading.updated_at)
   end
 
-  def _data_to_timeless_pairs(data)
-    (1..data.size).to_a.zip(data)
+  def _data_to_microsecond_pairs(data, start)
+    puts start
+    time = Time.parse(start.to_s)
+    time = time.to_i * 1000
+    time = time - 2000
+    data.map do |datum|
+      time += 1
+      [time, datum]
+    end
+  end
+
+  def _to_timestamp(datetime)
+    Time.parse(datetime.to_s).to_i * 1000
   end
 end
 
 get '/' do
-  reading = CurrentReading.first
+  @reading = CurrentReading.first
   @past_hour = Interval.all(:created_at.gt => DateTime.now - (60*60))
 
-  @voltages, @amps, @watts = reading.voltage_data, reading.amperage_data, reading.wattage_data
   erb :graph
 end
 

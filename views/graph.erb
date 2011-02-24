@@ -40,7 +40,22 @@
             { data: amps, label: "Amps", yaxis: 2 },
             { data: watts, label: "Watts" }
           ], {
-            xaxis: { },
+xaxis: { mode: 'time', ticks: <%= [1,5,9,13,17].map {|i| voltages[i][0]}.inspect %>,
+             tickFormatter: function (val, axis) {
+                var d = new Date(val);
+                var seconds = d.getSeconds();
+                var minutes = d.getMinutes();
+                var millis = d.getMilliseconds();
+                if (seconds < 10) { seconds = "0" + seconds; }
+                if (millis < 10) {
+                  millis = "00" + millis;
+                } else if (millis < 100) {
+                  millis = "0" + millis;
+                }
+                if (minutes < 10) { minutes = "0" + minutes; }
+                return d.getHours() + ":" + minutes + ":" + seconds + "." + millis;
+              }
+            },
             yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " V"} },
             y2axis: { min: -<%= amps_bounds %>, max: <%= amps_bounds %>, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
             legend: { position: 'sw' }
