@@ -6,6 +6,7 @@ namespace :db do
     `psql -U postgres -c "create database #{PowerHungry::Database::DB_NAME}"`
     PowerHungry::Database.connect
     PowerHungry::Database.migrate!
+    Rake::Task["power_hungry:name_sensors"].invoke
   end
 end
 
@@ -33,7 +34,7 @@ namespace :power_hungry do
       if sensor = Sensor.first(:address => address)
         sensor.update!(:name => name) unless sensor.name == name
       else
-        sensor.create!(:address => address, :name => name)
+        Sensor.create!(:address => address, :name => name)
       end
     end
   end
