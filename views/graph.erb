@@ -24,39 +24,43 @@
   </head>
   <body>
     <div id="holder"></div>
-    <p>
-      <a href="#" id="now">right now</a>
-      <a href="#" id="hour">past hour</a>
-      <a href="#" id="day">past day</a>
-    </p>
+    <ul>
+      <% @sensors.each do |sensor| %>
+        <li><a href="#" id="now-<%= sensor.id %>">Right Now (<%= sensor.to_s %>)</a></li>
+      <% end %>
+      <li><a href="#" id="hour">Past Hour</a></li>
+      <li><a href="#" id="day">Past Day</a></li>
+    </ul>
     <script id="source" language="javascript" type="text/javascript">
-      $("#now").click(function() {
-        var voltages = <%= voltages.inspect %>;
-        var amps = <%= amps.inspect %>;
-        var watts = <%= watts.inspect %>;
+      <% @sensors.each do |sensor| %>
+      $("#now-<%= sensor.id %>").click(function() {
+        var voltages = <%= voltages(sensor).inspect %>;
+        var amps = <%= amps(sensor).inspect %>;
 
         $.plot($("#holder"),
           [
             { data: voltages, label: "Voltage" },
             { data: amps, label: "Amps", yaxis: 2 },
-            { data: watts, label: "Watts" }
           ], {
             xaxis: { ticks: [] },
             yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " V"} },
-            y2axis: { min: -<%= amps_bounds %>, max: <%= amps_bounds %>, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
+            y2axis: { min: -<%= amps_bounds(sensor) %>, max: <%= amps_bounds(sensor) %>, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
             legend: { position: 'sw' }
           });
           return false;
       });
+      <% end %>
 
       $("#hour").click(function() {
-        var watthours = <%= interval_points(@past_hour, :watt_hours).inspect %>;
-        var watts = <%= interval_points(@past_hour, :average_watts).inspect %>;
+        <% @sensors.each do |sensor| %>
+          var sensor_<%= sensor.id %> = <%= interval_points(@past_hour[sensor], :watt_hours).inspect %>;
+        <% end %>
 
         $.plot($("#holder"),
           [
-            { data: watthours, label: "Watt-Hours" },
-            { data: watts, label: "Watts" }
+          <% @sensors.each do |sensor| %>
+            { data: sensor_<%= sensor.id %>, label: "<%= sensor.to_s %>" },
+          <% end %>
           ], {
             xaxis: { mode: 'time' },
             yaxis: { },
@@ -65,13 +69,15 @@
           return false;
         });
       $("#day").click(function() {
-        var watthours = <%= interval_points(@past_day, :watt_hours).inspect %>;
-        var watts = <%= interval_points(@past_day, :average_watts).inspect %>;
+        <% @sensors.each do |sensor| %>
+          var sensor_<%= sensor.id %> = <%= interval_points(@past_day[sensor], :watt_hours).inspect %>;
+        <% end %>
 
         $.plot($("#holder"),
           [
-            { data: watthours, label: "Watt-Hours" },
-            { data: watts, label: "Watts" },
+            <% @sensors.each do |sensor| %>
+              { data: sensor_<%= sensor.id %>, label: "<%= sensor.to_s %>" },
+            <% end %>
           ], {
             xaxis: { mode: 'time' },
             yaxis: { },
@@ -79,7 +85,7 @@
           });
           return false;
         });
-      $("#now").click();
+        $("#now-<%= @sensors.first.id %>").click();
       </script>
   </body>
 </html>

@@ -23,4 +23,18 @@ namespace :wattcher_network do
     wattcher = WattcherNetwork.new
     wattcher.run
   end
+
+  desc "Update sensor names"
+  task :name_sensors do
+    require 'wattcher_network'
+    [
+      [1, "Media Center"]
+    ].each do |address, name|
+      if sensor = Sensor.first(:address => address)
+        sensor.update!(:name => name) unless sensor.name == name
+      else
+        sensor.create!(:address => address, :name => name)
+      end
+    end
+  end
 end

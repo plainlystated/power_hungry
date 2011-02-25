@@ -30,10 +30,12 @@ class WattcherNetwork
       reading = next_reading
       puts reading.to_s if @debug
 
-      WattcherNetwork::History.add(reading.watt_hours, reading.averages[:watts])
+      WattcherNetwork::History.add(reading.sensor, reading.watt_hours)
       if WattcherNetwork::History.interval_passed?
-        puts "Watt-hours used in the past #{WattcherNetwork::History::INTERVAL_LENGTH} seconds: #{WattcherNetwork::History.interval_watt_hours}"
-        Interval.create!(:watt_hours => WattcherNetwork::History.interval_watt_hours, :average_watts => WattcherNetwork::History.average_watts, :interval_length => WattcherNetwork::History::INTERVAL_LENGTH)
+        WattcherNetwork::History.sensors.each do |sensor|
+          puts "#{[sensor.name, sensor.id].compact.first}: Watt-hours used in the past #{WattcherNetwork::History::INTERVAL_LENGTH} seconds: #{WattcherNetwork::History.interval_watt_hours(sensor)}"
+          Interval.create!(:watt_hours => WattcherNetwork::History.interval_watt_hours(sensor), :interval_length => WattcherNetwork::History::INTERVAL_LENGTH, :sensor => sensor)
+        end
         WattcherNetwork::History.restart
       else
       end

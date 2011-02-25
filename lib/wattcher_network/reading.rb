@@ -20,12 +20,16 @@ class WattcherNetwork
     SAMPLES_PER_PERIOD = 17.0
     SAMPLE_INTERVAL = 2 # Seconds
 
-    attr_reader :amperage_data, :voltage_data, :wattage_data
+    attr_reader :amperage_data, :voltage_data, :wattage_data, :sensor
 
     def initialize(packet, debug=false)
       @voltage_data = _parse_voltage_data(packet)
       @amperage_data = _parse_amperage_data(packet)
       @wattage_data = _calculate_wattage_data(@voltage_data, @amperage_data)
+      unless @sensor = Sensor.first(:address => packet.address)
+        @sensor = Sensor.create!(:address => packet.address)
+      end
+
       puts "Averages: #{averages.inspect}" if debug
       save
     end
@@ -38,12 +42,13 @@ class WattcherNetwork
         :voltage_avg => averages[:volts],
         :amperage_avg => averages[:amps],
         :wattage_avg => averages[:watts],
-        :watt_hours => watt_hours
+        :watt_hours => watt_hours,
+        :sensor => @sensor
       }
-      case CurrentReading.count
-      when 0 : CurrentReading.create!(params)
-      when 1 : CurrentReading.first.update!(params.merge(:updated_at => DateTime.now))
-      else raise("Too many current readings! (#{CurrentReading.count})")
+      if @sensor.current_reading
+        CurrentReading.first.update!(params.merge(:updated_at => DateTime.now))
+      else
+        CurrentReading.create!(params)
       end
     end
 

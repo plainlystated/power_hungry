@@ -4,6 +4,7 @@ require 'dm-types'
 
 require 'models/current_reading'
 require 'models/interval'
+require 'models/sensor'
 
 class WattcherNetwork
   module Database

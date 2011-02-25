@@ -5,16 +5,16 @@ require 'lib/wattcher_network/database'
 WattcherNetwork::Database.connect
 
 helpers do
-  def amps
-    _data_to_timeless_pairs(@reading.amperage_data)
+  def amps(sensor)
+    _data_to_timeless_pairs(sensor.current_reading.amperage_data)
   end
 
-  def amps_bounds
+  def amps_bounds(sensor)
     bound = 0
-    if @reading.amperage_data.min.abs > @reading.amperage_data.max
-      bound = @reading.amperage_data.min.abs
+    if sensor.current_reading.amperage_data.min.abs > sensor.current_reading.amperage_data.max
+      bound = sensor.current_reading.amperage_data.min.abs
     else
-      bound = @reading.amperage_data.max
+      bound = sensor.current_reading.amperage_data.max
     end
     bound + (bound * 0.1)
   end
@@ -25,12 +25,12 @@ helpers do
     end
   end
 
-  def voltages
-    _data_to_timeless_pairs(@reading.voltage_data)
+  def voltages(sensor)
+    _data_to_timeless_pairs(sensor.current_reading.voltage_data)
   end
 
-  def watts
-    _data_to_timeless_pairs(@reading.wattage_data)
+  def watts(sensor)
+    _data_to_timeless_pairs(sensor.current_reading.wattage_data)
   end
 
   def _data_to_timeless_pairs(data)
@@ -47,9 +47,13 @@ helpers do
 end
 
 get '/' do
-  @reading = CurrentReading.first
-  @past_hour = Interval.all(:created_at.gt => Time.now - (60*60))
-  @past_day = Interval.all(:created_at.gt => Time.now - (60*60*24))
+  @past_hour = {}
+  @past_day = {}
+  @sensors = Sensor.all
+  @sensors.each do |sensor|
+    @past_hour[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60))
+    @past_day[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24))
+  end
 
   erb :graph
 end
