@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'sinatra'
-require 'lib/wattcher_network/database'
+require 'lib/power_hungry/database'
 
-WattcherNetwork::Database.connect
+PowerHungry::Database.connect
 
 helpers do
   def amps(sensor)

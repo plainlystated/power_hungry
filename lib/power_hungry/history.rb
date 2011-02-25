@@ -1,4 +1,4 @@
-class WattcherNetwork
+class PowerHungry
   class History
     INTERVAL_LENGTH = 5 * 60
 
@@ -31,4 +31,4 @@ class WattcherNetwork
   end
 end
 
-WattcherNetwork::History.restart
+PowerHungry::History.restart

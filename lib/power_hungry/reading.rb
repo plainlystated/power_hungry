@@ -1,6 +1,6 @@
 require 'json'
 
-class WattcherNetwork
+class PowerHungry
   class Reading
     module Sensors
       CURRENT = 4

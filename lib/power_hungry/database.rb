@@ -6,11 +6,11 @@ require 'models/current_reading'
 require 'models/interval'
 require 'models/sensor'
 
-class WattcherNetwork
+class PowerHungry
   module Database
     SERVER = "localhost"
-    DB_NAME = "wattcher_network"
-    USERNAME = "wattcher_network"
+    DB_NAME = "power_hungry"
+    USERNAME = "power_hungry"
     PASSWORD = "Ed_HtnszGhr4Ac5h4kGFV-cy_mU"
 
     def self.connect(debug = false)
