@@ -1,7 +1,9 @@
 require 'rubygems'
 require 'sinatra'
+require 'lib/power_hungry/config'
 require 'lib/power_hungry/database'
 
+PowerHungry::Config.init
 PowerHungry::Database.connect
 
 helpers do

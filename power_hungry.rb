@@ -1,17 +1,15 @@
 require 'rubygems'
 require 'serialport'
 
+require 'lib/power_hungry/config'
 require 'lib/power_hungry/history'
 require 'lib/power_hungry/reading'
 require 'lib/power_hungry/database'
 require 'lib/xbee/packet'
 
 class PowerHungry
-  SERIALPORT = "/dev/tty.usbserial-FTF66X1C"
-  BAUDRATE = 9600
-
   def initialize
-    @serial = SerialPort.new(SERIALPORT)
+    @serial = SerialPort.new(Config.serial_port)
   end
 
   def debug
@@ -43,4 +41,5 @@ class PowerHungry
   end
 end
 
+PowerHungry::Config.init
 PowerHungry::Database.connect
