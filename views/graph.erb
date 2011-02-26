@@ -26,14 +26,14 @@
     <div id="holder"></div>
     <ul>
       <% @sensors.each do |sensor| %>
-        <li><a href="#" id="now-<%= sensor.id %>">Right Now (<%= sensor.to_s %>)</a></li>
+        <li><a href="#" id="now-<%= sensor.slug %>">Right Now (<%= sensor.to_s %>)</a></li>
       <% end %>
       <li><a href="#" id="hour">Past Hour</a></li>
       <li><a href="#" id="day">Past Day</a></li>
     </ul>
     <script id="source" language="javascript" type="text/javascript">
       <% @sensors.each do |sensor| %>
-      $("#now-<%= sensor.id %>").click(function() {
+      $("#now-<%= sensor.slug %>").click(function() {
         var voltages = <%= voltages(sensor).inspect %>;
         var amps = <%= amps(sensor).inspect %>;
 
@@ -53,13 +53,13 @@
 
       $("#hour").click(function() {
         <% @sensors.each do |sensor| %>
-          var sensor_<%= sensor.id %> = <%= interval_points(@past_hour[sensor], :watt_hours).inspect %>;
+          var sensor_<%= sensor.slug %> = <%= interval_points(@past_hour[sensor], :watt_hours).inspect %>;
         <% end %>
 
         $.plot($("#holder"),
           [
           <% @sensors.each do |sensor| %>
-            { data: sensor_<%= sensor.id %>, label: "<%= sensor.to_s %>" },
+            { data: sensor_<%= sensor.slug %>, label: "<%= sensor.to_s %>" },
           <% end %>
           ], {
             xaxis: { mode: 'time' },
@@ -70,13 +70,13 @@
         });
       $("#day").click(function() {
         <% @sensors.each do |sensor| %>
-          var sensor_<%= sensor.id %> = <%= interval_points(@past_day[sensor], :watt_hours).inspect %>;
+          var sensor_<%= sensor.slug %> = <%= interval_points(@past_day[sensor], :watt_hours).inspect %>;
         <% end %>
 
         $.plot($("#holder"),
           [
             <% @sensors.each do |sensor| %>
-              { data: sensor_<%= sensor.id %>, label: "<%= sensor.to_s %>" },
+              { data: sensor_<%= sensor.slug %>, label: "<%= sensor.to_s %>" },
             <% end %>
           ], {
             xaxis: { mode: 'time' },
@@ -85,7 +85,7 @@
           });
           return false;
         });
-        $("#now-<%= @sensors.first.id %>").click();
+        $("#now-<%= @sensors.first.slug %>").click();
       </script>
   </body>
 </html>
