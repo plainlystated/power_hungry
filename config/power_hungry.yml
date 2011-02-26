@@ -1,6 +1,0 @@
----
-:serial_port: /dev/ttyUSB0
-:database_server: localhost
-:database_name: power_hungry
-:database_login: power_hungry
-:database_password: password
