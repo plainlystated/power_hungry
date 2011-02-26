@@ -19,12 +19,12 @@ if len(sys.argv) == 1:
     sys.exit(["Required arg: serial dev (eg /dev/ttyUSB0)"])
 
 serial_dev = sys.argv[1]
-print("opening " + serial_dev)
 serial = serial.Serial(serial_dev, 9600)
 serial.open()
 
 while True:
     packet = find_packet(serial)
     if packet:
-        packet_bytes = [hex(ord(byte)) for byte in packet]
+        packet_bytes = [str(ord(byte)) for byte in packet]
         print(string.join(packet_bytes, " "))
+        sys.stdout.flush()

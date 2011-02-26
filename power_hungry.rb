@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'serialport'
 
 require 'lib/power_hungry/config'
 require 'lib/power_hungry/history'
@@ -9,7 +8,7 @@ require 'lib/xbee/packet'
 
 class PowerHungry
   def initialize
-    @serial = SerialPort.new(Config.serial_port)
+    @serial = IO.popen("python serial_proxy.py #{Config.serial_port}")
   end
 
   def debug

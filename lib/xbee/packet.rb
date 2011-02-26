@@ -165,17 +165,7 @@ class XBee
     end
 
     def _read_packet(serial)
-      start = Time.now
-      i = 1
-      until Time.now - start > 6
-        if serial.getc == START_IOPACKET
-          lengthMSB = serial.getc
-          lengthLSB = serial.getc
-          length = (lengthLSB + (lengthMSB << 8)) + 1
-
-          return Array.new(length) { serial.getc }
-        end
-      end
+      serial.gets.split(" ").map {|byte| byte.to_i}
     end
   end
 end
