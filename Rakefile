@@ -10,7 +10,7 @@ namespace :db do
 
   desc "Push updates to external (web) server"
   task :update_web_server do
-    puts "Updating remote database at #{Datetime.now}"
+    puts "Updating remote database at #{Time.now}"
     require 'lib/power_hungry/data_vacuum'
 
     PowerHungry::DataVacuum.update_external
