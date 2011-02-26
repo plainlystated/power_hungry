@@ -10,4 +10,5 @@ class Interval
 
   property :created_at,      DateTime, :default => lambda { DateTime.now }
   property :updated_at,      DateTime, :default => lambda { DateTime.now }
+  property :imported_at,    DateTime
 end

@@ -1,9 +1,7 @@
 namespace :db do
   desc "Drop and recreate database"
   task :redo do
-    require 'lib/power_hungry/config'
     require 'lib/power_hungry/database'
-    PowerHungry::Config.init
     `psql -U postgres -c "drop database #{PowerHungry::Config.database_name}"`
     `psql -U postgres -c "create database #{PowerHungry::Config.database_name}"`
     PowerHungry::Database.connect

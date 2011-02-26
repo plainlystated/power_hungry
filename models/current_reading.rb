@@ -1,7 +1,7 @@
 class CurrentReading
   include DataMapper::Resource
 
-  property :id,            Serial
+  property :sensor_slug,   String, :key => true
   property :amperage_data, Json
   property :voltage_data,  Json
   property :wattage_data,  Json
@@ -13,4 +13,5 @@ class CurrentReading
 
   property :created_at, DateTime, :default => lambda { DateTime.now }
   property :updated_at, DateTime, :default => lambda { DateTime.now }
+  property :imported_at, DateTime
 end
