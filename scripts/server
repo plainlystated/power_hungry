@@ -1,0 +1,2 @@
+ruby server.rb &
+echo $! > server.pid

@@ -1,2 +1,3 @@
 /config/deploy.rb
 /config/power_hungry.yml
+*.pid
