@@ -1,0 +1,2 @@
+ruby -rpower_hungry -e "PowerHungry.new.run" &
+echo $! > collector.pid
