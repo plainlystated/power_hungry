@@ -79,11 +79,11 @@ class XBee
       puts "\nReading sample #{sample_number}" if @debug
 
       sample = Array.new(6, nil)
-      puts "enabled analog channels: #{_enabled_analog_channels.inspect}"
+      puts "enabled analog channels: #{_enabled_analog_channels.inspect}" if @debug
 
       sample.each_with_index do |d, position|
         if _analog_reading_at_position?(position)
-          puts "[#{position}] checking sample for value on channel #{position}"
+          puts "[#{position}] checking sample for value on channel #{position}" if @debug
 
           # Assume no digital data (in this project), so ADC data starts at byte 8
           analog_data_start_position = 8
