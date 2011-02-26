@@ -41,4 +41,3 @@ class PowerHungry
 end
 
 PowerHungry::Config.init
-PowerHungry::Database.connect

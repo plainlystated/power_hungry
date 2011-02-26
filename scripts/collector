@@ -1,2 +1,2 @@
 ruby -rpower_hungry -e "PowerHungry.new.run" &
-echo $! > collector.pid
+echo $! > tmp/pids/collector.pid

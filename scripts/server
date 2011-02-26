@@ -1,2 +1,2 @@
 ruby server.rb &
-echo $! > server.pid
+echo $! > tmp/pids/server.pid
