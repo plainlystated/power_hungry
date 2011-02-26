@@ -1,1 +1,2 @@
-/config
+/config/deploy.rb
+/config/power_hungry.yml
