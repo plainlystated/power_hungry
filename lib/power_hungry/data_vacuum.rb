@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), 'database')
+
 class PowerHungry
   class DataVacuum
     def self.update_external
@@ -34,10 +36,14 @@ class PowerHungry
     def self.update_intervals
       puts "Updating Intervals"
       last_export = DataMapper.repository(:external) do
-        Interval.first(:order => [ :created_at.desc ]).try(:created_at)
+        Interval.first(:order => [ :created_at.desc ])
       end
 
-      intervals = last_export.nil? ? Interval.all : Interval.all(:created_at.gt => last_export)
+      if last_export
+        intervals = Interval.all(:created_at.gt => last_export.created_at)
+      else
+        intervals = Interval.all
+      end
       puts " - sending #{intervals.length} new records"
       intervals.each do |interval|
         params = {

@@ -4,9 +4,15 @@ namespace :db do
     require 'lib/power_hungry/database'
     `psql -U postgres -c "drop database #{PowerHungry::Config.database_name}"`
     `psql -U postgres -c "create database #{PowerHungry::Config.database_name}"`
-    PowerHungry::Database.connect
     PowerHungry::Database.migrate!
     Rake::Task["power_hungry:name_sensors"].invoke
+  end
+
+  desc "Push updates to external (web) server"
+  task :update_web_server do
+    require 'lib/power_hungry/data_vacuum'
+
+    PowerHungry::DataVacuum.update_external
   end
 end
 

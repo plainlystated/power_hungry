@@ -36,3 +36,5 @@ class PowerHungry
     end
   end
 end
+
+PowerHungry::Database.connect
