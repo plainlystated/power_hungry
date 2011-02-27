@@ -11,9 +11,10 @@ class PowerHungry
     CURRENT_NORM = 15.5 # Conversion to amps from ADC
 
     VrefCalibration = [
-      nil,  # Calibration for sensor #0
-      497,  # Calibration for sensor #1
-      nil   # etc... approx ((2.4v * (10Ko/14.7Ko)) / 3
+      :collector,  # This address is the collector's
+      497,         # Calibration for sensor #1
+      nil,         # Sensor 2
+      458          # Sensor 3
     ]
 
     # sampling at 1khz, so 16.6 samples per period.  Considering the first 17 samples should be close enough
@@ -42,13 +43,12 @@ class PowerHungry
         :voltage_avg => averages[:volts],
         :amperage_avg => averages[:amps],
         :wattage_avg => averages[:watts],
-        :watt_hours => watt_hours,
-        :sensor => @sensor
+        :watt_hours => watt_hours
       }
       if @sensor.current_reading
-        CurrentReading.first.update!(params.merge(:updated_at => DateTime.now))
+        @sensor.current_reading.update!(params.merge(:updated_at => DateTime.now))
       else
-        CurrentReading.create!(params)
+        CurrentReading.create!(params.merge(:sensor => @sensor))
       end
     end
 
