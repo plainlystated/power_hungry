@@ -8,6 +8,12 @@ namespace :db do
     Rake::Task["power_hungry:name_sensors"].invoke
   end
 
+  desc "Migrate the database"
+  task :migrate do
+    require 'lib/power_hungry/database'
+    PowerHungry::Database.migrate!
+  end
+
   desc "Push updates to external (web) server"
   task :update_web_server do
     puts "Updating remote database at #{Time.now}"

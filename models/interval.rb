@@ -5,10 +5,11 @@ class Interval
 
   property :interval_length, Integer
   property :watt_hours,      Float
+  property :watss,           Float
 
   belongs_to :sensor
 
   property :created_at,      DateTime, :default => lambda { DateTime.now }
   property :updated_at,      DateTime, :default => lambda { DateTime.now }
-  property :imported_at,    DateTime
+  property :imported_at,     DateTime
 end

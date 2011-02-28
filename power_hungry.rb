@@ -27,11 +27,16 @@ class PowerHungry
       reading = next_reading
       puts reading.to_s if @debug
 
-      PowerHungry::History.add(reading.sensor, reading.watt_hours)
+      PowerHungry::History.add(reading.sensor, reading.watt_hours, reading.averages[:watts])
       if PowerHungry::History.interval_passed?
         PowerHungry::History.sensors.each do |sensor|
           puts "#{sensor.to_s}: Watt-hours used in the past #{PowerHungry::History::INTERVAL_LENGTH} seconds: #{PowerHungry::History.interval_watt_hours(sensor)}"
-          Interval.create!(:watt_hours => PowerHungry::History.interval_watt_hours(sensor), :interval_length => PowerHungry::History::INTERVAL_LENGTH, :sensor => sensor)
+          Interval.create!(
+            :watts => PowerHungry::History.interval_watts_avg(sensor),
+            :watt_hours => PowerHungry::History.interval_watt_hours(sensor),
+            :interval_length => PowerHungry::History::INTERVAL_LENGTH,
+            :sensor => sensor
+          )
         end
         PowerHungry::History.restart
       else

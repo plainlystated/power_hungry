@@ -2,9 +2,10 @@ class PowerHungry
   class History
     INTERVAL_LENGTH = 5 * 60
 
-    def self.add(sensor, watthr)
-      @histories[sensor] = { :interval_watt_hours => 0 } unless @histories.has_key?(sensor)
+    def self.add(sensor, watthr, watts)
+      @histories[sensor] = { :watts => [], :interval_watt_hours => 0 } unless @histories.has_key?(sensor)
       @histories[sensor][:interval_watt_hours] += watthr
+      @histories[sensor][:watts] << watts
     end
 
     def self.elapsed_time
@@ -17,6 +18,10 @@ class PowerHungry
 
     def self.interval_watt_hours(sensor)
       @histories[sensor][:interval_watt_hours] * (60.0 * 60 / (elapsed_time))
+    end
+
+    def self.interval_watts_avg(sensor)
+      1.0 * @histories[sensor][:watts].sum / @histories[sensor][:watts].size
     end
 
     def self.restart
