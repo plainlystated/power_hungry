@@ -49,6 +49,7 @@ class PowerHungry
         params = {
           :interval_length => interval.interval_length,
           :watt_hours      => interval.watt_hours,
+          :watts           => interval.watts,
           :sensor_slug     => interval.sensor_slug,
           :created_at      => interval.created_at,
           :updated_at      => interval.updated_at,
