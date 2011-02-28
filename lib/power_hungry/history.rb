@@ -21,7 +21,7 @@ class PowerHungry
     end
 
     def self.interval_watts_avg(sensor)
-      1.0 * @histories[sensor][:watts].sum / @histories[sensor][:watts].size
+      @histories[sensor][:watts].inject(0.0) {|sum, w| sum + w} / @histories[sensor][:watts].size
     end
 
     def self.restart
