@@ -5,7 +5,7 @@ class Interval
 
   property :interval_length, Integer
   property :watt_hours,      Float
-  property :watss,           Float
+  property :watts,           Float
 
   belongs_to :sensor
 
