@@ -1,0 +1,44 @@
+body {
+  background: #999 url(http://raphaeljs.com/images/bgbg.png);
+  font: 100.01% "Fontin Sans", Fontin-Sans, "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Lucida, Verdana, Helvetica, sans-serif;
+  color: #000;
+  margin: 10px 0 0 0;
+  padding: 0;
+  text-align: center;
+}
+#holder {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: 0 1px 3px #666;
+  background: #fff;
+  margin: 0 auto;
+  width: 1200px;
+  height: 480px;
+}
+#graph-list {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: 0 1px 3px #666;
+  background: #fff;
+  margin: 0 auto;
+  width: 300px;
+  text-align: left;
+}
+#graph-detail {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: 0 1px 3px #666;
+  background: #ddd;
+}
+ul {
+  list-style: none;
+  padding-left: 1em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+li.selected {
+  -webkit-border-radius: 10px;
+  background: #999;
+  width: 400;
+}

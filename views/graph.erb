@@ -1,36 +1,22 @@
 <html>
   <head>
-    <style>
-      body {
-          background: #999 url(http://raphaeljs.com/images/bgbg.png);
-          font: 100.01% "Fontin Sans", Fontin-Sans, "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Lucida, Verdana, Helvetica, sans-serif;
-          color: #000;
-          margin: 10px 0 0 0;
-          padding: 0;
-          text-align: center;
-      }
-      #holder {
-          -moz-border-radius: 10px;
-          -webkit-border-radius: 10px;
-          -webkit-box-shadow: 0 1px 3px #666;
-          background: #ddd;
-          margin: 0 auto;
-          width: 1200px;
-          height: 480px;
-      }
-    </style>
-    <script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="js/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script>
+    <link href="/css/grid.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="/css/power-hungry.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script>
   </head>
   <body>
+    <div id="header">Power Hungry</div>
     <div id="holder"></div>
-    <ul>
-      <% @sensors.each do |sensor| %>
-        <li><a href="#" id="now-<%= sensor.slug %>">Right Now (<%= sensor.to_s %>)</a></li>
-      <% end %>
-      <li><a href="#" id="hour">Past Hour</a></li>
-      <li><a href="#" id="day">Past Day</a></li>
-    </ul>
+    <div id="graph-list">
+      <ul>
+        <% @sensors.each do |sensor| %>
+          <li><a href="#" id="now-<%= sensor.slug %>">Right Now (<%= sensor.to_s %>)</a></li>
+        <% end %>
+        <li><a href="#" id="hour">Past Hour</a></li>
+        <li><a href="#" id="day">Past Day</a></li>
+      </ul>
+    </div>
     <script id="source" language="javascript" type="text/javascript">
       <% @sensors.each do |sensor| %>
       $("#now-<%= sensor.slug %>").click(function() {
