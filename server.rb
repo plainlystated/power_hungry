@@ -31,6 +31,27 @@ helpers do
     _data_to_timeless_pairs(sensor.current_reading.voltage_data)
   end
 
+  def watt_hours(sensor_intervals)
+    watt_hours = []
+    cummulative_watt_hours = 0
+
+    all_timestamps = sensor_intervals.map { |sensor, intervals| intervals.map { |interval| _to_timestamp(interval.updated_at) } }.flatten.uniq.sort
+    all_timestamps.each do |timestamp|
+      timestamp_watt_hours = 0
+
+      sensor_intervals.each do |sensor, intervals|
+        if interval = intervals.detect { |i| _to_timestamp(i.updated_at) == timestamp }
+          interval_watt_hours = interval.watts * interval.interval_length / (60.0 * 60)
+          timestamp_watt_hours += interval_watt_hours
+        end
+      end
+
+      cummulative_watt_hours += timestamp_watt_hours
+      watt_hours << [timestamp, cummulative_watt_hours]
+    end
+    watt_hours
+  end
+
   def watts(sensor)
     _data_to_timeless_pairs(sensor.current_reading.wattage_data)
   end

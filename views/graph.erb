@@ -39,34 +39,40 @@
 
       $("#hour").click(function() {
         <% @sensors.each do |sensor| %>
-          var sensor_<%= sensor.slug %> = <%= interval_points(@past_hour[sensor], :watt_hours).inspect %>;
+        var sensor_<%= sensor.slug %>_watts = <%= interval_points(@past_hour[sensor], :watts).inspect %>;
         <% end %>
+        var watt_hours = <%= watt_hours(@past_hour).inspect %>;
 
         $.plot($("#holder"),
           [
-          <% @sensors.each do |sensor| %>
-            { data: sensor_<%= sensor.slug %>, label: "<%= sensor.to_s %>" },
-          <% end %>
+            <% @sensors.each do |sensor| %>
+              { data: sensor_<%= sensor.slug %>_watts, label: "<%= sensor.to_s %>" },
+            <% end %>
+            { data: watt_hours, label: "Watt Hours", yaxis: 2 },
           ], {
             xaxis: { mode: 'time' },
-            yaxis: { },
+            yaxis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W"; } },
+            y2axis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W Hr"; } },
             legend: { position: 'sw' }
           });
           return false;
         });
       $("#day").click(function() {
         <% @sensors.each do |sensor| %>
-          var sensor_<%= sensor.slug %> = <%= interval_points(@past_day[sensor], :watt_hours).inspect %>;
+          var sensor_<%= sensor.slug %>_watts = <%= interval_points(@past_day[sensor], :watts).inspect %>;
         <% end %>
+        var watt_hours = <%= watt_hours(@past_day).inspect %>;
 
         $.plot($("#holder"),
           [
             <% @sensors.each do |sensor| %>
               { data: sensor_<%= sensor.slug %>, label: "<%= sensor.to_s %>" },
             <% end %>
+            { data: watt_hours, label: "Watt Hours", yaxis: 2 },
           ], {
             xaxis: { mode: 'time' },
-            yaxis: { },
+            yaxis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W"; } },
+            y2axis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W Hr"; } },
             legend: { position: 'sw' }
           });
           return false;
