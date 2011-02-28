@@ -66,7 +66,7 @@
         $.plot($("#holder"),
           [
             <% @sensors.each do |sensor| %>
-              { data: sensor_<%= sensor.slug %>, label: "<%= sensor.to_s %>" },
+              { data: sensor_<%= sensor.slug %>_watts, label: "<%= sensor.to_s %>" },
             <% end %>
             { data: watt_hours, label: "Watt Hours", yaxis: 2 },
           ], {
