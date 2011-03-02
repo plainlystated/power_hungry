@@ -2,82 +2,92 @@
   <head>
     <link href="/css/grid.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="/css/power-hungry.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+
     <script src="/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/power-hungry.js" type="text/javascript" charset="utf-8"></script>
+
   </head>
   <body>
-    <div id="header">Power Hungry</div>
-    <div id="holder"></div>
-    <div id="graph-list">
-      <ul>
-        <% @sensors.each do |sensor| %>
-          <li><a href="#" id="now-<%= sensor.slug %>">Right Now (<%= sensor.to_s %>)</a></li>
-        <% end %>
-        <li><a href="#" id="hour">Past Hour</a></li>
-        <li><a href="#" id="day">Past Day</a></li>
-      </ul>
+    <div id="header"><h1>Power Hungry</h1></div>
+    <div id="holder" clas="prefix_1 grid_10 suffix_1"></div>
+    <div id="container" class="container_12">
+      <div id="graph-list" class="grid_3 prefix_1">
+        <div class="column-content">
+          <ul>
+            <% @sensors.each do |sensor| %>
+              <li><a href="#" id="now-<%= sensor.slug %>">Right Now (<%= sensor.to_s %>)</a></li>
+            <% end %>
+            <li><a href="#" id="hour">Past Hour</a></li>
+            <li><a href="#" id="day">Past Day</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="graph-details" class="grid_3">
+        <div class="column-content">
+          <div id="current-graph-name"></div>
+          <div id="graph-details-mediacenter">
+            Various A/V devices, including a big TV and two computers.
+          </div>
+          <div id="graph-details-kitchenappliances">
+            Microwave, toaster oven, etc.
+          </div>
+          <div id="graph-details-three">
+            Nothing yet, just testing...
+          </div>
+          <div id="graph-details-hour">
+            Wattage (and cummulative watt-hours) used over the past hour
+          </div>
+          <div id="graph-details-day">
+            Wattage (and cummulative watt-hours) used over the past day
+          </div>
+        </div>
+      </div>
+
+      <div id="site-about" class="grid_3 suffix_2">
+        <div class="column-content">
+          about, code, etc
+        </div>
+      </div>
+
     </div>
+
     <script id="source" language="javascript" type="text/javascript">
       <% @sensors.each do |sensor| %>
-      $("#now-<%= sensor.slug %>").click(function() {
-        var voltages = <%= voltages(sensor).inspect %>;
-        var amps = <%= amps(sensor).inspect %>;
-
-        $.plot($("#holder"),
-          [
-            { data: voltages, label: "Voltage" },
-            { data: amps, label: "Amps", yaxis: 2 },
-          ], {
-            xaxis: { ticks: [] },
-            yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " V"} },
-            y2axis: { min: -<%= amps_bounds(sensor) %>, max: <%= amps_bounds(sensor) %>, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
-            legend: { position: 'sw' }
-          });
-          return false;
-      });
+        sensorGraph(
+          '<%= sensor.slug %>',
+          '<%= sensor.to_s %>',
+          <%= amps_bounds(sensor) %>,
+          <%= voltages(sensor).inspect %>,
+          <%= amps(sensor).inspect %>
+        );
       <% end %>
 
-      $("#hour").click(function() {
-        <% @sensors.each do |sensor| %>
-        var sensor_<%= sensor.slug %>_watts = <%= interval_points(@past_hour[sensor], :watts).inspect %>;
-        <% end %>
-        var watt_hours = <%= watt_hours(@past_hour).inspect %>;
+      timeGraph(
+        'hour',
+        [
+          <% @sensors.each do |sensor| %>
+            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_hour[sensor], :watts).inspect %>],
+          <% end %>
+        ],
+        <%= watt_hours(@past_hour).inspect %>
+      );
 
-        $.plot($("#holder"),
-          [
-            <% @sensors.each do |sensor| %>
-              { data: sensor_<%= sensor.slug %>_watts, label: "<%= sensor.to_s %>" },
-            <% end %>
-            { data: watt_hours, label: "Watt Hours", yaxis: 2, lines: { lineWidth: 5 } },
-          ], {
-            xaxis: { mode: 'time' },
-            yaxis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W"; } },
-            y2axis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W Hr"; } },
-            legend: { position: 'sw' }
-          });
-          return false;
-        });
-      $("#day").click(function() {
-        <% @sensors.each do |sensor| %>
-          var sensor_<%= sensor.slug %>_watts = <%= interval_points(@past_day[sensor], :watts).inspect %>;
-        <% end %>
-        var watt_hours = <%= watt_hours(@past_day).inspect %>;
+      timeGraph(
+        'day',
+        [
+          <% @sensors.each do |sensor| %>
+            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_day[sensor], :watts).inspect %>],
+          <% end %>
+        ],
+        <%= watt_hours(@past_day).inspect %>
+      );
 
-        $.plot($("#holder"),
-          [
-            <% @sensors.each do |sensor| %>
-              { data: sensor_<%= sensor.slug %>_watts, label: "<%= sensor.to_s %>" },
-            <% end %>
-            { data: watt_hours, label: "Watt Hours", yaxis: 2, lines: { lineWidth: 5 } },
-          ], {
-            xaxis: { mode: 'time' },
-            yaxis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W"; } },
-            y2axis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W Hr"; } },
-            legend: { position: 'sw' }
-          });
-          return false;
-        });
+      $(document).ready(function() {
         $("#now-<%= @sensors.first.slug %>").click();
+      });
       </script>
   </body>
 </html>
