@@ -1,5 +1,5 @@
 body {
-  background: #999;
+  background:url(/images/bg.png);
   font: 100.01% "Fontin Sans", Fontin-Sans, "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Lucida, Verdana, Helvetica, sans-serif;
   color: #000;
   margin: 0;
@@ -9,6 +9,7 @@ body {
   font-family: 'Rock Salt', arial, serif;
   margin: 0;
   text-align: center;
+  color: #8F4B2A;
 }
 #holder {
   -moz-border-radius: 10px;
