@@ -44,7 +44,7 @@ namespace :power_hungry do
     [
       [1, "Media Center"],
       [2, "Kitchen Appliances"],
-      [3, "Third"],
+      [3, "Third"]
     ].each do |address, name|
       if sensor = Sensor.first(:address => address)
         sensor.update!(:name => name) unless sensor.name == name
