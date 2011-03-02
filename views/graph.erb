@@ -3,6 +3,7 @@
     <link href="/css/grid.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="/css/power-hungry.css" media="screen" rel="stylesheet" type="text/css" />
     <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Sans:100,regular' rel='stylesheet' type='text/css'>
 
     <script src="/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script>
@@ -11,13 +12,13 @@
   </head>
   <body>
     <div id="header"><h1>Power Hungry</h1></div>
-    <div id="holder" clas="prefix_1 grid_10 suffix_1"></div>
+    <div id="holder"></div>
     <div id="container" class="container_12">
-      <div id="graph-list" class="grid_3 prefix_1">
+      <div id="graph-list" class="grid_4">
         <div class="column-content">
           <ul>
             <% @sensors.each do |sensor| %>
-              <li><a href="#" id="now-<%= sensor.slug %>">Right Now (<%= sensor.to_s %>)</a></li>
+              <li><a href="#" id="now-<%= sensor.slug %>">Right Now &mdash; <%= sensor.to_s %></a></li>
             <% end %>
             <li><a href="#" id="hour">Past Hour</a></li>
             <li><a href="#" id="day">Past Day</a></li>
@@ -25,30 +26,60 @@
         </div>
       </div>
 
-      <div id="graph-details" class="grid_3">
+      <div id="graph-details" class="grid_4">
         <div class="column-content">
-          <div id="current-graph-name"></div>
-          <div id="graph-details-mediacenter">
-            Various A/V devices, including a big TV and two computers.
+          <div id="current-graph-name" class="content-header"></div>
+          <div class="graph-details" id="graph-details-mediacenter">
+            <p>
+              Various A/V devices, including a big TV and two computers.
+            </p>
+            <p>
+              This shows a 19 microsecond sample from about a minute ago.
+            </p>
           </div>
-          <div id="graph-details-kitchenappliances">
-            Microwave, toaster oven, etc.
+          <div class="graph-details" id="graph-details-kitchenappliances">
+            <p>
+              Microwave, toaster oven, etc.
+            </p>
+            <p>
+              This shows a 19 microsecond sample from about a minute ago.
+            </p>
           </div>
-          <div id="graph-details-three">
-            Nothing yet, just testing...
+          <div class="graph-details" id="graph-details-third">
+            <p>
+              Nothing yet, just testing...
+            </p>
+            <p>
+              This shows a 19 microsecond sample from about a minute ago.
+            </p>
           </div>
-          <div id="graph-details-hour">
+          <div class="graph-details" id="graph-details-hour">
             Wattage (and cummulative watt-hours) used over the past hour
           </div>
-          <div id="graph-details-day">
+          <div class="graph-details" id="graph-details-day">
             Wattage (and cummulative watt-hours) used over the past day
           </div>
         </div>
       </div>
 
-      <div id="site-about" class="grid_3 suffix_2">
+      <div id="site-about" class="grid_4">
         <div class="column-content">
-          about, code, etc
+          <div class="content-header">Hardware</div>
+          <div>
+            The data is collected using Kill-A-Watts, wirelessly networked together using XBee radios. Check out Adafruit's <a href="http://www.ladyada.net/make/tweetawatt/">kits</a>.
+          </div>
+          <br />
+
+          <div class="content-header">Software</div>
+          <div>
+            This project was done in ruby, and the <a href="https://github.com/plainlystated/power_hungry">code is on github</a>.
+          </div>
+          <br />
+
+          <div class="content-header">Author</div>
+          <div>
+            <a href="http://plainlystated.com">Patrick Schless</a>
+          </div>
         </div>
       </div>
 

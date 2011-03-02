@@ -4,11 +4,11 @@ body {
   color: #000;
   margin: 0;
   padding: 0;
-  text-align: center;
 }
 #header h1 {
   font-family: 'Rock Salt', arial, serif;
   margin: 0;
+  text-align: center;
 }
 #holder {
   -moz-border-radius: 10px;
@@ -24,28 +24,39 @@ body {
   -webkit-border-radius: 10px;
   -webkit-box-shadow: 0 1px 3px #666;
   background: #fff;
+  padding: 0.5em;
 }
 #graph-list ul {
   margin: 0;
-  text-align: left;
-}
-#current-graph-name {
-  margin-bottom: 2em;
 }
 
+.content-header {
+  margin-bottom: 0.25em;
+  font-weight: bold;
+  font: 100.01% "Fontin Sans", Fontin-Sans, "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Lucida, Verdana, Helvetica, sans-serif;
+}
 
 ul {
   list-style: none;
-  padding-left: 1em;
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
+  padding-left: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-li.selected {
-  -webkit-border-radius: 10px;
-  background: #999;
-  width: 400;
+li {
+  margin-bottom: 0.25em;
 }
+
 #container {
   margin-top: 1em;
+  font-family: 'Josefin Sans', arial, serif;
+  font-size: 21px;
+}
+
+a {
+  text-decoration: none
+}
+
+p {
+  margin-top: 0;
 }
