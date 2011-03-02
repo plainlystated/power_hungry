@@ -13,8 +13,8 @@ class PowerHungry
     VrefCalibration = [
       :collector,  # This address is the collector's
       497,         # Calibration for sensor #1
-      nil,         # Sensor 2
-      458          # Sensor 3
+      458,         # Sensor 2
+      470          # Sensor 3
     ]
 
     # sampling at 1khz, so 16.6 samples per period.  Considering the first 17 samples should be close enough

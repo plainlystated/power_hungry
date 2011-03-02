@@ -48,7 +48,7 @@
             <% @sensors.each do |sensor| %>
               { data: sensor_<%= sensor.slug %>_watts, label: "<%= sensor.to_s %>" },
             <% end %>
-            { data: watt_hours, label: "Watt Hours", yaxis: 2 },
+            { data: watt_hours, label: "Watt Hours", yaxis: 2, lines: { lineWidth: 5 } },
           ], {
             xaxis: { mode: 'time' },
             yaxis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W"; } },
@@ -68,7 +68,7 @@
             <% @sensors.each do |sensor| %>
               { data: sensor_<%= sensor.slug %>_watts, label: "<%= sensor.to_s %>" },
             <% end %>
-            { data: watt_hours, label: "Watt Hours", yaxis: 2 },
+            { data: watt_hours, label: "Watt Hours", yaxis: 2, lines: { lineWidth: 5 } },
           ], {
             xaxis: { mode: 'time' },
             yaxis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W"; } },
