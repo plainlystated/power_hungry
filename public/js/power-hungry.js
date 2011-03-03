@@ -1,4 +1,4 @@
-function formatWithMicroseconds(time, axis) {
+function formatWithMilliseconds(time, axis) {
   date = new Date(time);
   hour = date.getHours();
   min = date.getMinutes();
@@ -10,10 +10,14 @@ function formatWithMicroseconds(time, axis) {
     seconds = "0" + seconds;
   }
 
-  // timestamps don't store microseconds, so we stored them in the milliseconds spot
   milliseconds = date.getMilliseconds();
+  if (milliseconds < 10) {
+    milliseconds = "00" + milliseconds;
+  } else if (milliseconds < 100) {
+    milliseconds = "0" + milliseconds;
+  }
 
-  return hour + ":" + min + ":" + seconds + " + " + milliseconds + "&micro;sec" ;
+  return hour + ":" + min + ":" + seconds + "." + milliseconds;
 }
 
 function sensorGraph(slug, name, amperage_amplitude, voltages, amps) {
@@ -24,7 +28,7 @@ function sensorGraph(slug, name, amperage_amplitude, voltages, amps) {
         { data: voltages, label: "Voltage" },
         { data: amps, label: "Amps", yaxis: 2 },
       ], {
-        xaxis: { mode: 'time', tickFormatter: formatWithMicroseconds, ticks: [voltages[3][0], voltages[7][0], voltages[11][0], voltages[15][0]] },
+        xaxis: { mode: 'time', tickFormatter: formatWithMilliseconds, ticks: [voltages[3][0], voltages[7][0], voltages[11][0], voltages[15][0]] },
         yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + "V"} },
         y2axis: { min: -amperage_amplitude, max: amperage_amplitude, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + "A"; } },
         legend: { position: 'sw' }
