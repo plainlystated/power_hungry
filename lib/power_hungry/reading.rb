@@ -13,7 +13,7 @@ class PowerHungry
     VrefCalibration = [
       :collector,  # This address is the collector's
       497,         # Calibration for sensor #1
-      458,         # Sensor 2
+      469,         # Sensor 2
       470          # Sensor 3
     ]
 
