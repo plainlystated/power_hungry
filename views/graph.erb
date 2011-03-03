@@ -23,9 +23,20 @@
     </script>
   </head>
   <body>
-    <div id="header"><h1>Power Hungry</h1></div>
-    <div id="holder"></div>
+    <div id="container-header" class="container_12">
+      <div id="header" class="grid_6">
+        <h1>Power Hungry</h1>
+      </div>
+      <div id="header-description" class="prefix_1 grid_5">
+        <div>
+          Tracking personal power usage in Chicago since 2011.
+        </div>
+      </div>
+    </div>
+
     <div id="container" class="container_12">
+      <div id="holder" class="grid_12"></div>
+
       <div id="graph-list" class="grid_4">
         <div class="column-content">
           <ul>
@@ -58,10 +69,10 @@
             </p>
           </div>
           <div class="graph-details" id="graph-details-hour">
-            Wattage (and cummulative watt-hours) used over the past hour
+            Wattage (and cumulative watt-hours) used over the past hour
           </div>
           <div class="graph-details" id="graph-details-day">
-            Wattage (and cummulative watt-hours) used over the past day
+            Wattage (and cumulative watt-hours) used over the past day
           </div>
         </div>
       </div>

@@ -24,7 +24,7 @@ function sensorGraph(slug, name, amperage_amplitude, voltages, amps) {
         { data: voltages, label: "Voltage" },
         { data: amps, label: "Amps", yaxis: 2 },
       ], {
-        xaxis: { mode: 'time', tickFormatter: formatWithMicroseconds, ticks: [voltages[1][0], voltages[5][0], voltages[9][0], voltages[13][0], voltages[17][0]] },
+        xaxis: { mode: 'time', tickFormatter: formatWithMicroseconds, ticks: [voltages[3][0], voltages[7][0], voltages[11][0], voltages[15][0]] },
         yaxis: { min: -200, max: 200, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " V"} },
         y2axis: { min: -amperage_amplitude, max: amperage_amplitude, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " A"; } },
         legend: { position: 'sw' }
@@ -50,7 +50,7 @@ function timeGraph(id, sensor_list, watt_hours) {
         xaxis: { mode: 'time' },
         yaxis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W"; } },
         y2axis: { min: 0, tickFormatter: function(val, axis) { return val.toFixed(axis.tickDecimals) + " W Hr"; } },
-        legend: { position: 'sw' }
+        legend: { position: 'nw' }
       });
       return false;
     });

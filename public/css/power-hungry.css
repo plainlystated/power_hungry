@@ -5,20 +5,29 @@ body {
   margin: 0;
   padding: 0;
 }
+#header, #header-description {
+  height: 100px;
+  color: #8A6750;
+}
+#header-description {
+  font-size: 30px;
+  text-align: right;
+}
+#header-description div {
+  position: absolute;
+  bottom: 0.5em;
+}
 #header h1 {
   font-family: 'Rock Salt', arial, serif;
   margin: 0;
-  text-align: center;
-  color: #8F4B2A;
 }
 #holder {
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   -webkit-box-shadow: 0 1px 3px #666;
   background: #fff;
-  margin: 0 auto;
-  width: 1200px;
-  height: 480px;
+  height: 376px;
+  margin-bottom: 0.5em;
 }
 .column-content {
   -moz-border-radius: 10px;
@@ -48,8 +57,7 @@ li {
   margin-bottom: 0.25em;
 }
 
-#container {
-  margin-top: 1em;
+#container, #container-header {
   font-family: 'Josefin Sans', arial, serif;
   font-size: 21px;
 }
