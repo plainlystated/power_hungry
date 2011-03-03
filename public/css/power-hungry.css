@@ -21,13 +21,16 @@ body {
   font-family: 'Rock Salt', arial, serif;
   margin: 0;
 }
-#holder {
+#holder-container {
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   -webkit-box-shadow: 0 1px 3px #666;
   background: #fff;
-  height: 376px;
   margin-bottom: 0.5em;
+}
+#holder {
+  height: 376px;
+  margin: 0 0.25em;
 }
 .column-content {
   -moz-border-radius: 10px;
@@ -51,6 +54,10 @@ ul {
   padding-left: 0;
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.container_12 {
+  margin-bottom: 0.5em;
 }
 
 li {
