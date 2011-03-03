@@ -8,7 +8,7 @@ PowerHungry::Database.connect
 
 helpers do
   def amps(sensor)
-    _data_to_timeless_pairs(sensor.current_reading.amperage_data)
+    _data_to_faketime_pairs(sensor.current_reading.updated_at, sensor.current_reading.amperage_data)
   end
 
   def amps_bounds(sensor)
@@ -28,7 +28,7 @@ helpers do
   end
 
   def voltages(sensor)
-    _data_to_timeless_pairs(sensor.current_reading.voltage_data)
+    _data_to_faketime_pairs(sensor.current_reading.updated_at, sensor.current_reading.voltage_data)
   end
 
   def watt_hours(sensor_intervals)
@@ -55,13 +55,18 @@ helpers do
   end
 
   def watts(sensor)
-    _data_to_timeless_pairs(sensor.current_reading.wattage_data)
+    _data_to_faketime_pairs(sensor.current_reading.updated_at, sensor.current_reading.wattage_data)
   end
 
-  def _data_to_timeless_pairs(data)
-    (0..data.size-1).map do |i|
-      [i, data[i]]
+  def _data_to_faketime_pairs(start, data)
+    pairs = []
+    start_timestamp = _to_timestamp(start)
+
+    data.each_with_index do |value, i|
+      pairs << [start_timestamp + i, value]
     end
+
+    pairs
   end
 
   def _to_timestamp(datetime)
