@@ -35,22 +35,29 @@ helpers do
     watt_hours = []
     cummulative_watt_hours = 0
 
-    all_timestamps = sensor_intervals.map { |sensor, intervals| intervals.map { |interval| interval.updated_at } }.flatten.uniq.sort
+    timestamp_intervals = sensor_intervals.inject({}) do |grouped_intervals, (sensor, intervals)|
+      intervals.each do |interval|
+        grouped_intervals[interval.updated_at] ||= []
+        grouped_intervals[interval.updated_at] << interval
+      end
+
+      grouped_intervals
+    end
+
+    all_timestamps = timestamp_intervals.keys.sort
 
     all_timestamps.each do |timestamp|
       timestamp_watt_hours = 0
 
-      sensor_intervals.each do |sensor, intervals|
-        if interval = intervals.detect { |i| i.updated_at == timestamp }
-          interval_watt_hours = interval.watts * interval.interval_length / (60.0 * 60)
-          timestamp_watt_hours += interval_watt_hours
-          next
-        end
+      timestamp_watt_hours = timestamp_intervals[timestamp].inject(0) do |watt_hours_sum, interval|
+        interval_watt_hours = interval.watts * interval.interval_length / (60.0 * 60)
+        watt_hours_sum + interval_watt_hours
       end
 
       cummulative_watt_hours += timestamp_watt_hours
       watt_hours << [_to_timestamp(timestamp), cummulative_watt_hours]
     end
+
     watt_hours
   end
 
@@ -70,8 +77,10 @@ helpers do
   end
 
   def _to_timestamp(datetime)
-    time = Time.parse(datetime.to_s)
-    time = time + (datetime.offset * 24 * 60 * 60)
+    usec = (datetime.sec_fraction * 60 * 60 * 24 * (10**6)).to_i
+    time = Time.gm(datetime.year, datetime.month, datetime.day, datetime.hour, datetime.min,
+              datetime.sec, usec)
+
     time.to_i * 1000
   end
 end
