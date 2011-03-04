@@ -1,6 +1,6 @@
 function formatWithMilliseconds(time, axis) {
   date = new Date(time);
-  hour = date.getHours();
+  hour = date.getUTCHours();
   min = date.getMinutes();
   if (min < 10) {
     min = "0" + min;
