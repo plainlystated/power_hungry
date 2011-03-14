@@ -8,23 +8,28 @@ PowerHungry::Config.init
 PowerHungry::Database.connect
 
 DEBUG = true
-NUM_POINTS = 500
+NUM_INTERVALS = 500
 
 class Cache
-  @@empty = true
-  @@cache = {}
+  @@cache = nil
 
   def self.empty?
-    !!@@empty
+    @@cache.nil?
   end
 
   def self.expired?
     @@expires_at < Time.now
   end
 
-  def self.expires_at(time)
-    puts "Cache expires in #{time - Time.now} seconds" if DEBUG
-    @@expires_at = time
+  def self.fetch(options = {})
+    if empty? || expired?
+      @@expires_at = Time.now + 20 # Prevent race condition
+
+      @@cache = yield
+      @@expires_at = options[:expires_at]
+    end
+
+    @@cache
   end
 
   def self.get(name)
@@ -39,7 +44,7 @@ end
 
 helpers do
   def amps(sensor)
-    _data_to_faketime_pairs(sensor.current_reading.updated_at, sensor.current_reading.amperage_data)
+    _data_to_faketime_pairs(_to_timestamp(sensor.current_reading.updated_at), sensor.current_reading.amperage_data)
   end
 
   def amps_bounds(sensor)
@@ -54,31 +59,37 @@ helpers do
 
   def interval_points(intervals, method)
     intervals.map do |interval|
-      [_to_timestamp(interval.updated_at), interval.send(method)]
+      [interval[:updated_at], interval[method]]
     end
   end
 
   def voltages(sensor)
-    _data_to_faketime_pairs(sensor.current_reading.updated_at, sensor.current_reading.voltage_data)
+    _data_to_faketime_pairs(_to_timestamp(sensor.current_reading.updated_at), sensor.current_reading.voltage_data)
   end
 
-  def downsample(data, num_samples)
-    return data if data.size <= num_samples
+  def downsample(intervals, num_samples)
     start = Time.now
 
-    factor = data.size / num_samples
+    # factor = count / num_samples
+    factor = intervals.size / num_samples
+    factor = 1 if factor == 0
 
     downsampled = []
-    data.in_groups_of(factor) do |group|
+    intervals.in_groups_of(factor) do |group|
       next if group.last.nil? # only consider full sets
 
-      time = (group.first.first + group.last.first) / 2
-      value = group.inject(0.0) {|sum, v| sum + v.last} / group.size
-      downsampled << [time, value]
+      updated_at = (_to_timestamp(group.first.updated_at) + _to_timestamp(group.last.updated_at)) / 2
+      interval_length = _average(group, :interval_length)
+      watts = _average(group, :watts)
+
+      downsampled << {:interval_length => interval_length, :updated_at => updated_at, :watts => watts}
     end
 
-    puts "Downsampling #{data.size} records to #{downsampled.size} (#{Time.now - start})"
     downsampled
+  end
+
+  def interval(data)
+    {:interval_length => data[:interval_length], :updated_at => _to_timestamp(data[:updated_at]), :watts => data[:watts]}
   end
 
   def watt_hours(sensor_intervals)
@@ -88,8 +99,8 @@ helpers do
 
     timestamp_intervals = sensor_intervals.inject({}) do |grouped_intervals, (sensor, intervals)|
       intervals.each do |interval|
-        grouped_intervals[interval.updated_at] ||= []
-        grouped_intervals[interval.updated_at] << interval
+        grouped_intervals[interval[:updated_at]] ||= []
+        grouped_intervals[interval[:updated_at]] << interval
       end
 
       grouped_intervals
@@ -101,28 +112,30 @@ helpers do
       timestamp_watt_hours = 0
 
       timestamp_watt_hours = timestamp_intervals[timestamp].inject(0) do |watt_hours_sum, interval|
-        interval_watt_hours = interval.watts * interval.interval_length / (60.0 * 60)
+        interval_watt_hours = interval[:watts] * interval[:interval_length] / (60.0 * 60)
         watt_hours_sum + interval_watt_hours
       end
 
       cummulative_watt_hours += timestamp_watt_hours
-      watt_hours << [_to_timestamp(timestamp), cummulative_watt_hours]
+      watt_hours << [timestamp, cummulative_watt_hours]
     end
 
-    puts "computing watt_hours: #{Time.now - start}" if DEBUG
     watt_hours
   end
 
   def watts(sensor)
-    _data_to_faketime_pairs(sensor.current_reading.updated_at, sensor.current_reading.wattage_data)
+    _data_to_faketime_pairs(_to_timestamp(sensor.current_reading.updated_at), sensor.current_reading.wattage_data)
+  end
+
+  def _average(set, attribute)
+    set.inject(0.0) { |sum, val| sum + val.send(attribute) } / set.size
   end
 
   def _data_to_faketime_pairs(start, data)
     pairs = []
-    start_timestamp = _to_timestamp(start)
 
     data.each_with_index do |value, i|
-      pairs << [start_timestamp + i, value]
+      pairs << [start + i, value]
     end
 
     pairs
@@ -138,36 +151,28 @@ helpers do
 end
 
 get '/' do
-  if Cache.empty? || Cache.expired?
-    puts "refreshing cache" if DEBUG
-    @past_day = {}
-    @past_week = {}
-    @sensors = Sensor.all
-    start = Time.now
-    @sensors.each do |sensor|
-      @past_day[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24))
-      @past_week[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24 * 30))
+  @sensors,
+    @past_day,
+    @past_day_watt_hours,
+    @past_week,
+    @past_week_watt_hours = Cache.fetch(:expires_at => Time.now + 10) do
+    past_day = {}
+    past_week = {}
+
+    sensors = Sensor.all
+    sensors.each do |sensor|
+      day_intervals = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24))
+      past_day[sensor] = downsample(day_intervals, NUM_INTERVALS)
+
+      week_intervals = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24 * 7))
+      past_week[sensor] = downsample(week_intervals, NUM_INTERVALS)
     end
 
-    @past_day_watt_hours = downsample(watt_hours(@past_day), NUM_POINTS)
-    @past_week_watt_hours = downsample(watt_hours(@past_week), NUM_POINTS)
-    Cache.expires_at(Time.now + 60)
-    puts "db query: #{Time.now - start}" if DEBUG
+    past_day_watt_hours = watt_hours(past_day)
+    past_week_watt_hours = watt_hours(past_week)
 
-    Cache.set(:sensors, @sensors)
-    Cache.set(:past_day, @past_day)
-    Cache.set(:past_week, @past_week)
-    Cache.set(:past_day_watt_hours, @past_day_watt_hours)
-    Cache.set(:past_week_watt_hours, @past_week_watt_hours)
-  else
-    @sensors = Cache.get(:sensors)
-    @past_day = Cache.get(:past_day)
-    @past_week = Cache.get(:past_week)
-    @past_day_watt_hours = Cache.get(:past_day_watt_hours)
-    @past_week_watt_hours = Cache.get(:past_week_watt_hours)
+    [sensors, past_day, watt_hours(past_day), past_week, watt_hours(past_week)]
   end
 
   erb :graph
 end
-
-

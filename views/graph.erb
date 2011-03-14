@@ -121,7 +121,7 @@
         'day',
         [
           <% @sensors.each do |sensor| %>
-            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= downsample(interval_points(@past_day[sensor], :watts), NUM_POINTS).inspect %>],
+            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_day[sensor], :watts).inspect %>],
           <% end %>
         ],
         <%= @past_day_watt_hours.inspect %>
@@ -131,7 +131,7 @@
         'week',
         [
           <% @sensors.each do |sensor| %>
-            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= downsample(interval_points(@past_week[sensor], :watts), NUM_POINTS).inspect %>],
+            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_week[sensor], :watts).inspect %>],
           <% end %>
         ],
         <%= @past_week_watt_hours.inspect %>
