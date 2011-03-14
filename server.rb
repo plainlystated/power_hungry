@@ -86,12 +86,12 @@ helpers do
 end
 
 get '/' do
-  @past_hour = {}
   @past_day = {}
+  @past_month = {}
   @sensors = Sensor.all
   @sensors.each do |sensor|
-    @past_hour[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60))
     @past_day[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24))
+    @past_month[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24 * 30))
   end
 
   erb :graph

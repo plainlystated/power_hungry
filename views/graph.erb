@@ -49,8 +49,8 @@
             <% @sensors.each do |sensor| %>
               <li><a href="#" id="now-<%= sensor.slug %>">Right Now &mdash; <%= sensor.to_s %></a></li>
             <% end %>
-            <li><a href="#" id="hour">Past Hour</a></li>
             <li><a href="#" id="day">Past Day</a></li>
+            <li><a href="#" id="month">Past Month</a></li>
           </ul>
         </div>
       </div>
@@ -74,11 +74,11 @@
               This shows a 19 millisecond sample from about a minute ago. Since US mains runs at 60Hz, 19 msec is just over one full cycle, which you can see here.
             </p>
           </div>
-          <div class="graph-details" id="graph-details-hour">
-            Wattage (and cumulative watt-hours) used over the past hour
-          </div>
           <div class="graph-details" id="graph-details-day">
             Wattage (and cumulative watt-hours) used over the past day
+          </div>
+          <div class="graph-details" id="graph-details-month">
+            Wattage (and cumulative watt-hours) used over the past month
           </div>
         </div>
       </div>
@@ -118,16 +118,6 @@
       <% end %>
 
       timeGraph(
-        'hour',
-        [
-          <% @sensors.each do |sensor| %>
-            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_hour[sensor], :watts).inspect %>],
-          <% end %>
-        ],
-        <%= watt_hours(@past_hour).inspect %>
-      );
-
-      timeGraph(
         'day',
         [
           <% @sensors.each do |sensor| %>
@@ -135,6 +125,16 @@
           <% end %>
         ],
         <%= watt_hours(@past_day).inspect %>
+      );
+
+      timeGraph(
+        'month',
+        [
+          <% @sensors.each do |sensor| %>
+            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_month[sensor], :watts).inspect %>],
+          <% end %>
+        ],
+        <%= watt_hours(@past_month).inspect %>
       );
 
       $(document).ready(function() {
