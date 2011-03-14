@@ -22,7 +22,7 @@ function formatWithMilliseconds(time, axis) {
 
 function sensorGraph(slug, name, amperage_amplitude, voltages, amps) {
   $("#now-" + slug).click(function() {
-    showDetails(slug, name);
+    showDetails('#now-' + slug, slug, name);
     $.plot($("#holder"),
       [
         { data: voltages, label: "Voltage" },
@@ -40,7 +40,7 @@ function sensorGraph(slug, name, amperage_amplitude, voltages, amps) {
 
 function timeGraph(id, sensor_list, watt_hours) {
   $("#" + id).click(function() {
-    showDetails(id, "Past " + id);
+    showDetails('#' + id, id, "Past " + id);
     var lines = [];
 
     for (sensor_data in sensor_list) {
@@ -60,7 +60,9 @@ function timeGraph(id, sensor_list, watt_hours) {
     });
 }
 
-function showDetails(slug, name) {
+function showDetails(link_id, slug, name) {
+	$('.arrows').remove();
+	$('<span class="arrows">&#187;</span>').insertBefore(link_id);
   $('.graph-details').each(function(i) {
     $(this).hide();
   });
