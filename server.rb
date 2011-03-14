@@ -155,7 +155,7 @@ get '/' do
     @past_day,
     @past_day_watt_hours,
     @past_week,
-    @past_week_watt_hours = Cache.fetch(:expires_at => Time.now + 10) do
+    @past_week_watt_hours = Cache.fetch(:expires_at => Time.now + 120) do
     past_day = {}
     past_week = {}
 
