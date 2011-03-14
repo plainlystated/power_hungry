@@ -50,7 +50,7 @@
               <li><a href="#" id="now-<%= sensor.slug %>">Right Now &mdash; <%= sensor.to_s %></a></li>
             <% end %>
             <li><a href="#" id="day">Past Day</a></li>
-            <li><a href="#" id="month">Past Month</a></li>
+            <li><a href="#" id="week">Past Week</a></li>
           </ul>
         </div>
       </div>
@@ -77,8 +77,8 @@
           <div class="graph-details" id="graph-details-day">
             Wattage (and cumulative watt-hours) used over the past day
           </div>
-          <div class="graph-details" id="graph-details-month">
-            Wattage (and cumulative watt-hours) used over the past month
+          <div class="graph-details" id="graph-details-week">
+            Wattage (and cumulative watt-hours) used over the past week
           </div>
         </div>
       </div>
@@ -128,13 +128,13 @@
       );
 
       timeGraph(
-        'month',
+        'week',
         [
           <% @sensors.each do |sensor| %>
-            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_month[sensor], :watts).inspect %>],
+            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_week[sensor], :watts).inspect %>],
           <% end %>
         ],
-        <%= watt_hours(@past_month).inspect %>
+        <%= watt_hours(@past_week).inspect %>
       );
 
       $(document).ready(function() {
