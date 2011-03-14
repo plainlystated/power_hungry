@@ -2,9 +2,13 @@ require 'rubygems'
 require 'sinatra'
 require 'lib/power_hungry/config'
 require 'lib/power_hungry/database'
+require 'active_support'
 
 PowerHungry::Config.init
 PowerHungry::Database.connect
+
+DEBUG = true
+NUM_POINTS = 500
 
 helpers do
   def amps(sensor)
@@ -31,7 +35,27 @@ helpers do
     _data_to_faketime_pairs(sensor.current_reading.updated_at, sensor.current_reading.voltage_data)
   end
 
+  def downsample(data, num_samples)
+    return data if data.size <= num_samples
+    start = Time.now
+
+    factor = data.size / num_samples
+
+    downsampled = []
+    data.in_groups_of(factor) do |group|
+      next if group.last.nil? # only consider full sets
+
+      time = (group.first.first + group.last.first) / 2
+      value = group.inject(0.0) {|sum, v| sum + v.last} / group.size
+      downsampled << [time, value]
+    end
+
+    puts "Downsampling #{data.size} records to #{downsampled.size} (#{Time.now - start})"
+    downsampled
+  end
+
   def watt_hours(sensor_intervals)
+    start = Time.now
     watt_hours = []
     cummulative_watt_hours = 0
 
@@ -58,6 +82,7 @@ helpers do
       watt_hours << [_to_timestamp(timestamp), cummulative_watt_hours]
     end
 
+    puts "computing watt_hours: #{Time.now - start}" if DEBUG
     watt_hours
   end
 
@@ -89,10 +114,16 @@ get '/' do
   @past_day = {}
   @past_week = {}
   @sensors = Sensor.all
+  start = Time.now
   @sensors.each do |sensor|
     @past_day[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24))
     @past_week[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24 * 30))
   end
+
+  @past_day_watt_hours = downsample(watt_hours(@past_day), NUM_POINTS)
+  @past_week_watt_hours = downsample(watt_hours(@past_week), NUM_POINTS)
+
+  puts "db query: #{Time.now - start}" if DEBUG
 
   erb :graph
 end

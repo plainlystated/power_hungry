@@ -121,20 +121,20 @@
         'day',
         [
           <% @sensors.each do |sensor| %>
-            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_day[sensor], :watts).inspect %>],
+            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= downsample(interval_points(@past_day[sensor], :watts), NUM_POINTS).inspect %>],
           <% end %>
         ],
-        <%= watt_hours(@past_day).inspect %>
+        <%= @past_day_watt_hours.inspect %>
       );
 
       timeGraph(
         'week',
         [
           <% @sensors.each do |sensor| %>
-            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= interval_points(@past_week[sensor], :watts).inspect %>],
+            ['<%= sensor.slug %>', '<%= sensor.to_s %>', <%= downsample(interval_points(@past_week[sensor], :watts), NUM_POINTS).inspect %>],
           <% end %>
         ],
-        <%= watt_hours(@past_week).inspect %>
+        <%= @past_week_watt_hours.inspect %>
       );
 
       $(document).ready(function() {
