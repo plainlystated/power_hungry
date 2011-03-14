@@ -10,6 +10,33 @@ PowerHungry::Database.connect
 DEBUG = true
 NUM_POINTS = 500
 
+class Cache
+  @@empty = true
+  @@cache = {}
+
+  def self.empty?
+    !!@@empty
+  end
+
+  def self.expired?
+    @@expires_at < Time.now
+  end
+
+  def self.expires_at(time)
+    puts "Cache expires in #{time - Time.now} seconds" if DEBUG
+    @@expires_at = time
+  end
+
+  def self.get(name)
+    @@cache[name]
+  end
+
+  def self.set(name, value)
+    @@empty = false
+    @@cache[name] = value
+  end
+end
+
 helpers do
   def amps(sensor)
     _data_to_faketime_pairs(sensor.current_reading.updated_at, sensor.current_reading.amperage_data)
@@ -111,19 +138,34 @@ helpers do
 end
 
 get '/' do
-  @past_day = {}
-  @past_week = {}
-  @sensors = Sensor.all
-  start = Time.now
-  @sensors.each do |sensor|
-    @past_day[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24))
-    @past_week[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24 * 30))
+  if Cache.empty? || Cache.expired?
+    puts "refreshing cache" if DEBUG
+    @past_day = {}
+    @past_week = {}
+    @sensors = Sensor.all
+    start = Time.now
+    @sensors.each do |sensor|
+      @past_day[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24))
+      @past_week[sensor] = Interval.all(:sensor => sensor, :created_at.gt => Time.now - (60*60*24 * 30))
+    end
+
+    @past_day_watt_hours = downsample(watt_hours(@past_day), NUM_POINTS)
+    @past_week_watt_hours = downsample(watt_hours(@past_week), NUM_POINTS)
+    Cache.expires_at(Time.now + 60)
+    puts "db query: #{Time.now - start}" if DEBUG
+
+    Cache.set(:sensors, @sensors)
+    Cache.set(:past_day, @past_day)
+    Cache.set(:past_week, @past_week)
+    Cache.set(:past_day_watt_hours, @past_day_watt_hours)
+    Cache.set(:past_week_watt_hours, @past_week_watt_hours)
+  else
+    @sensors = Cache.get(:sensors)
+    @past_day = Cache.get(:past_day)
+    @past_week = Cache.get(:past_week)
+    @past_day_watt_hours = Cache.get(:past_day_watt_hours)
+    @past_week_watt_hours = Cache.get(:past_week_watt_hours)
   end
-
-  @past_day_watt_hours = downsample(watt_hours(@past_day), NUM_POINTS)
-  @past_week_watt_hours = downsample(watt_hours(@past_week), NUM_POINTS)
-
-  puts "db query: #{Time.now - start}" if DEBUG
 
   erb :graph
 end
