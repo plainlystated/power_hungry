@@ -1,5 +1,5 @@
 require 'rubygems'
 
 require 'sinatra'
-require 'power_hungry'
+require './server'
 run Sinatra::Application
